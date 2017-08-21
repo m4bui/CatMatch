@@ -59,7 +59,7 @@ public class CatImageArrayIT {
      * [number of pixels matching original perfect cat image]_cat_image.txt
      * ex 9_cat_image.txt
      *
-     *
+     * If you would like to use the method it is suggested you change the path where it places the files.
      */
     private void createCatTestFiles()  {
         try {

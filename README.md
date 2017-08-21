@@ -52,8 +52,8 @@ Deployment for OSX and Linux :
 2. copy war file located in target directory into pathToTomcatDirectory/webapp directory
    cp target/Project-1.0-SNAPSHOT.war.original pathToTomcatDirectory/webapp
 3. cd pathToTomcatDirectory/bin
-4. place perfect_cat_image.txt in pathToTomcatDirectory/bin
-   cp src/test/cat_image_files/perfect_cat_image.txt pathToTomcatDirectory/bin
+4. copy perfect_cat_image.txt in pathToTomcatDirectory/bin
+   cp target/perfect_cat_image.txt pathToTomcatDirectory/bin
 4, Make all sh files executable 
    chmod +x *.sh 
 5. Run

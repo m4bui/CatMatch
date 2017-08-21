@@ -157,22 +157,26 @@ public class ImageArrayTest {
         }
     }
 
-//
-//    @Test
-//    public void Should_ReturnRanges_WhenGiven4984() {
-//        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(49,84), CatImageArray.PERFECT_CAT_ROW_COUNT, 100);
-//        for(Range range : ranges) {
-//            System.out.println("low is: " + range.getLow() + " high is: " + range.getHigh());
-//        }
-//    }
-//
-//    @Test
-//    public void Should_GetRange_WhenPositionx0y0() {
-//        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(0,0), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT);
-//        for(Range range : ranges) {
-//            System.out.println("low is: " + range.getLow() + " high is: " + range.getHigh());
-//        }
-//    }
+
+    @Test
+    public void Should_ReturnRanges_WhenGiven4984() {
+        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(49,84), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT, 100);
+        int inc = 0;
+        for(Range range : ranges) {
+            assertEquals(4984 + inc, range.getLow());
+            inc += 100;
+        }
+    }
+
+    @Test
+    public void Should_GetRange_WhenPositionx0y0() {
+        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(0,0), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT);
+        int inc = 0;
+        for(Range range : ranges) {
+            assertEquals(0 + inc, range.getLow());
+            inc += CatImageArray.PERFECT_CAT_COL_COUNT;
+        }
+    }
 
 
 
