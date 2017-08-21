@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,6 +21,7 @@ public class ImageMatchingController {
      * The Image Detection API detects cat images given a text file
      */
     private final String version = "/imageDetect/v1";
+
     @RequestMapping("/")
     public String defaultPage() {
         return "imageDetection";
@@ -32,14 +34,12 @@ public class ImageMatchingController {
      * @param threshold confidence value of image match, defaults to 75
      * @return coordinates with confidence value greater or equal to threshold.
      */
-    //TODO how to specify that it has to be a text file
     @RequestMapping(value = version + "/cat", method = RequestMethod.POST, consumes = "multipart/form-data", produces="application/json")
     public ResponseEntity<ArrayList<Match>> create(@RequestParam("file") MultipartFile file, @RequestParam(value = "threshold", defaultValue = "75") int threshold) {
         System.out.println("---------INSIDE ORDER----------");
         ArrayList<Match> matches;
         CatImageArray catImageArray = new CatImageArray(file, threshold);
         matches = catImageArray.getMatches();
-        System.out.println("Size of matches returned is: " + matches.size());
         return new ResponseEntity<>(matches, HttpStatus.OK);
     }
 }

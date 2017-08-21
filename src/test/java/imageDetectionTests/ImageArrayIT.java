@@ -1,9 +1,11 @@
 package imageDetectionTests;
 
+import imageDetection.Application;
 import imageDetection.Helper.Range;
 import imageDetection.ImageMatrix.CatImageArray;
 import imageDetection.ImageMatrix.ImageArray;
 import imageDetection.ResponseModel.Coordinate;
+import imageDetection.ResponseModel.Match;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +21,7 @@ public class ImageArrayIT {
     @Before
     public void setUp() {
         mImageArray = new ImageArray();
-        mPerfectCatImage = mImageArray.getPerfectImage(CatImageArray.perfectCatPath);
+        mPerfectCatImage = mImageArray.getPerfectImage(Application.perfectCatPath);
 
     }
     @Test
@@ -36,14 +38,13 @@ public class ImageArrayIT {
     }
 
     @Test
-    public void Should_Test() {
-//        mImageArray.removeOverlappingMatches()
+    public void Should_GetPerfectPixelCount195_When_AllMatches() {
+        ArrayList<String> image = mImageArray.getPerfectImage(Application.perfectCatPath);
+
+        mImageArray.setConfidenceValues(mPerfectCatImage, image, CatImageArray.PERFECT_CAT_PIXEL_COUNT );
+        ArrayList<ArrayList<Coordinate>> confidenceValues = mImageArray.getConfidenceValues();
+        ArrayList<Match> matches = mImageArray.getAllMatches(0, confidenceValues);
+        assertEquals(CatImageArray.PERFECT_CAT_PIXEL_COUNT, matches.size());
     }
 
-    @Test
-    public void ShouldReturn1Coordinate_Overlap() {
-        ArrayList<String> image = mImageArray.getPerfectImage(ImageMatchingControllerIT.imageWithCats);
-        System.out.println("image row size is " +  image.size());
-        System.out.println("image col size is " + image.get(0).length());
-    }
 }

@@ -1,5 +1,6 @@
 package imageDetectionTests;
 
+import imageDetection.Application;
 import imageDetection.Helper.Range;
 import imageDetection.ImageMatrix.CatImageArray;
 import imageDetection.ImageMatrix.ImageArray;
@@ -26,7 +27,7 @@ public class ImageArrayTest {
     @Before
     public void setUp() {
         mImageArray = new ImageArray();
-        mPerfectCatImage = mImageArray.getPerfectImage(CatImageArray.perfectCatPath);
+        mPerfectCatImage = mImageArray.getPerfectImage(Application.perfectCatPath);
 
     }
 
@@ -43,7 +44,7 @@ public class ImageArrayTest {
 
     @Test
     public void Should_ReturnImageWithSpecifiedMaxRow_When_MaxRowSpecified() {
-        ArrayList<String> image = mImageArray.getPerfectImage(CatImageArray.perfectCatPath);
+        ArrayList<String> image = mImageArray.getPerfectImage(Application.perfectCatPath);
         assertEquals(CatImageArray.PERFECT_CAT_ROW_COUNT, image.size());
     }
 
@@ -63,7 +64,7 @@ public class ImageArrayTest {
     @Test //General level of confidence test case
     public void Should_Return100_When_CalledWithSameImage() {
         Coordinate origin = new Coordinate(0,0);
-        ArrayList<String> image = mImageArray.getPerfectImage(CatImageArray.perfectCatPath);
+        ArrayList<String> image = mImageArray.getPerfectImage(Application.perfectCatPath);
         int condfidenceValue = mImageArray.getConfidenceValue(origin, image, image, CatImageArray.PERFECT_CAT_PIXEL_COUNT );
         assertEquals(100, condfidenceValue);
     }
@@ -134,57 +135,28 @@ public class ImageArrayTest {
 
     //Helper Method to get Confidence Value
     public void confidenceValueTest(ArrayList<String> imageToCompare, Coordinate coordinate, int expected) {
-        ArrayList<String> image = mImageArray.getPerfectImage(CatImageArray.perfectCatPath);
+        ArrayList<String> image = mImageArray.getPerfectImage(Application.perfectCatPath);
         int confidenceValue = mImageArray.getConfidenceValue(coordinate, image, imageToCompare, CatImageArray.PERFECT_CAT_PIXEL_COUNT);
         assertEquals(expected, confidenceValue);
 
     }
 
-    @Test
-    public void Should_Contain11_Coordinatex0y0() {
-//        Coordinate coordinate = new Coordinate(0,0);
-//        ArrayList<Range> ranges = mImageArray.getMatrixArea(coordinate, CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT);
-//        assertEquals(true, ranges.get(0).contains(11));
-//        for (Range range : ranges) {
-//            System.out.println("Range is: " + range.getLow() + "-" + range.getHigh());
-//        }
-//        System.out.println("low is: " + ranges.get(1).getLow() + " high is " + ranges.get(1).getHigh());
-//        assertEquals(true, ranges.get(1).contains(18));
-    }
+
     /**
      * test getRanges for a given coordinate to see what area it covers
      */
-    //TODO need to come up with a better name
-//    @Test
-//    public void Should_ReturnArea_When_GiveCoordinate () {
-//        Coordinate coordinate = new Coordinate(0,0 );
-//        ArrayList<Range> ranges = mImageArray.getMatrixArea(coordinate, CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT);
-//
-//
-//        for(Range range : ranges) {
-//            int position = mImageArray.getGridPosition(0, 0, CatImageArray.PERFECT_CAT_COL_COUNT);
-//            if(range.contains(position)) {
-//                System.out.println("low is: " + range.getLow() + " high is: " + range.getHigh() + " position: " + position);
-//            }
-//        }
-//
-//    }
-//
-//    @Test
-//    public void Should_ReturnRanges_WhenGiven8047() {
-//        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(80,47), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT);
-//        for(Range range : ranges) {
-//            System.out.println("low is: " + range.getLow() + " high is: " + range.getHigh());
-//        }
-//    }
-//
-//    @Test
-//    public void Should_ReturnRanges_WhenGiven8484() {
-//        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(84,84), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT);
-//        for(Range range : ranges) {
-//            System.out.println("low is: " + range.getLow() + " high is: " + range.getHigh());
-//        }
-//    }
+
+
+    @Test
+    public void Should_ReturnCorrectLowRanges_WhenGiven8047() {
+        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(80,47), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT, 100);
+        int inc = 0;
+        for(Range range : ranges) {
+            assertEquals(8047 + inc, range.getLow());
+            inc += 100;
+        }
+    }
+
 //
 //    @Test
 //    public void Should_ReturnRanges_WhenGiven4984() {
@@ -227,23 +199,6 @@ public class ImageArrayTest {
         testDimen90n270(translatedImage, mPerfectCatImage);
     }
 
-    //TODO remove this is integration testing
-    @Test
-    public void getMatches() {
-        ArrayList<String> image = mImageArray.getPerfectImage(CatImageArray.perfectCatPath);
-
-        mImageArray.setConfidenceValues(mPerfectCatImage, image, CatImageArray.PERFECT_CAT_PIXEL_COUNT );
-        ArrayList<ArrayList<Coordinate>> confidenceValues = mImageArray.getConfidenceValues();
-        ArrayList<Match> matches = mImageArray.getAllMatches(0, confidenceValues);
-//        for (Match match : matches) {
-//            System.out.println("coordinate is: " + match.getPosition().getX() + "," + match.getPosition().getY() + " with confidence value: " + match.getConfidenceValue());
-//        }
-//        ArrayList<Match> finalMatches = mImageArray.removeOverlappingMatches(CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT, matches);
-//        for (Match match : finalMatches)
-//            System.out.println("coordinate is: " + match.getPosition().getX() + "," + match.getPosition().getY() + " with confidence value: " + match.getConfidenceValue());
-
-    }
-
     /**
      *  getGridPosition
      */
@@ -252,13 +207,11 @@ public class ImageArrayTest {
     public void Should_GetGridPosition() {
         ArrayList<String> image = mImageArray.getPerfectImage(imageWithCats);
         int maxCol = image.get(0).length();
-//        System.out.print("max col is "+ maxCol);
         int pixel = 0;
         for(int row = 0; row < image.size(); row++) {
             for(int col = 0; col < maxCol ; col++) {
                 assertEquals(pixel, mImageArray.getGridPosition(row, col, maxCol));
                 pixel++;
-//                System.out.println("Grid position is:" + mImageArray.getGridPosition(row, col, maxCol));
             }
         }
     }
@@ -273,7 +226,6 @@ public class ImageArrayTest {
         ArrayList<String> image = mImageArray.getPerfectImage(imageWithCats);
         int maxCol = image.get(0).length();
         assertEquals(8484, mImageArray.getGridPosition(84, 84, maxCol));
-        System.out.println("Grid position is:" + mImageArray.getGridPosition(84, 84, maxCol));
     }
 
     @Test

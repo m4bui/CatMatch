@@ -58,12 +58,7 @@ public class ImageArray {
                 mPerfectMatchCol = maxLength;
             }
 
-            //Create a perfect grid for easier computing
-            for(String line : perfectImage) {
-                while(line.length() < mPerfectMatchCol)
-                    line += " ";
-                finalPerfectImage.add(line);
-            }
+            finalPerfectImage = constructPerfectGrid(perfectImage, mPerfectMatchCol);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -95,17 +90,25 @@ public class ImageArray {
                 mClientImageRow = image.size();
                 mClientImageCol = maxLength;
             }
-            System.out.println("client max row is " +  mClientImageRow);
-            System.out.println("client max col is " + mClientImageCol);
 
         } catch(IOException e) {
             e.printStackTrace();
         }
 
-        return image;
+        return constructPerfectGrid(image, mClientImageCol);
     }
 
-    //accessor to get the max imagCol of the image passed in
+    public ArrayList<String> constructPerfectGrid(ArrayList<String> image, int maxCol) {
+        //Create a perfect grid for easier computing
+        ArrayList<String> perfectImage = new ArrayList<>();
+        for(String line : image) {
+            while(line.length() < maxCol)
+                line += " ";
+            perfectImage.add(line);
+        }
+        return  perfectImage;
+    }
+    //accessors just in case needed
     public int getClientImageCol() {
         return mClientImageCol;
     }
@@ -124,6 +127,7 @@ public class ImageArray {
     public int getPerfectMatchCol() {
         return mPerfectMatchCol;
     }
+
     /**
      * Get confidence values of image match
      * @return array 0-100 representing the confidence 0 (low) to 100 (high). Within each confidence index
@@ -155,7 +159,7 @@ public class ImageArray {
      * @param perfectImage the perfect image
      * @param image the image to search for the perfect image
      * @param perfectImagePixelCount the number of pixels that make up the perfect image
-     * @return
+     * @return confidence value 0 -100
      */
     public int getConfidenceValue(Coordinate startingPoint, ArrayList<String> perfectImage, ArrayList<String> image, int perfectImagePixelCount) {
         double confidenceValue = 0;
@@ -221,9 +225,7 @@ public class ImageArray {
 
         ArrayList<Match> finalMatches = new ArrayList<>(); //all non overlapping matches
         ArrayList<Match> allMatches = matches;
-        ArrayList<Match> matchesToRemove = new ArrayList<>();
 
-        int gridPosition;
         boolean exists;
 
         if(allMatches != null && allMatches.size() > 0) { //make sure there's something in the matches to compare to
@@ -231,7 +233,6 @@ public class ImageArray {
             for(Match match : allMatches) {
                 exists = false; //set to false, don't know if the match coordinate is an overlapping image
                 Coordinate coordinate = match.getPosition(); //get Coordinate of the existing matches
-                gridPosition = getGridPosition(coordinate.getX(), coordinate.getY(), imageCol); //get its grid position
 
                 //compare the current match with the final matches, if it overlaps don't add it
                 for (Match finalMatch : finalMatches) {
@@ -254,7 +255,8 @@ public class ImageArray {
     /**
      * Returns true if the position is within the list of ranges of false otherwise
      * @param ranges list of ranges
-     * @return true if position is within range, false if position is NOT in range
+     * @param finalRanges list of ranges to compare to
+     * @return true if and of the ranges is within final ranges, false otherwise
      */
     public boolean isImageOverlap(ArrayList<Range> ranges, ArrayList<Range> finalRanges) {
         int position;
@@ -277,7 +279,6 @@ public class ImageArray {
      * @param col
      * @return
      */
-    //TODO remove this once you get the other one working
     public int getGridPosition(int row, int col, int maxCol) {
         return row * maxCol + col;
     }
@@ -292,12 +293,10 @@ public class ImageArray {
         int x = position.getX();
         int y = position.getY();
         int currentPosition;
-//        int currentPosition = getGridPosition(x, y , imageCol);
         int row = 0;
         while(row < perfectImageRow) {
             currentPosition= getGridPosition(x + row, y , imageCol);
             ranges.add(new Range(currentPosition, currentPosition + perfectImageCol - 1));
-//            ranges.add(new Range(currentPosition, currentPosition + perfectImageCol -1));
             row++;
         }
 
