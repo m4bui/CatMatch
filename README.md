@@ -46,20 +46,19 @@ examples response:
 ——————————————————————————————————————-
 How To Run:
 ——————————————————————————————————————-
-Run deployment Script for MAC:
-/**This installs server TomCat 9 in your Library and deploys on 127.0.0.0:8080**/
-./MacDeployCatMatch
-
-Deploy on AWS EBS: 
-Open Elastic Beanstalk Mgmt Console
-Predefined Configuration: Tomcat 
-Environment Type: Your Choice
-Upload the war file
-/Project/target/Project-1.0-SNAPSHOT.war.original
-
-Or to get the latest version clone & follow one of the above deployment methods
-git clone https://github.com/m4bui/CatMatch.git
-
+Java 8 & Tomcat 8 or 9
+Deployment for OSX and Linux :
+1. install Tomcat 8 or 9 link to download http://tomcat.apache.org/download-90.cgi and put in tomcat directory
+2. copy war file located in target directory into pathToTomcatDirectory/webapp directory
+   cp target/Project-1.0-SNAPSHOT.war.original pathToTomcatDirectory/webapp
+3. cd pathToTomcatDirectory/bin
+4. place perfect_cat_image.txt in pathToTomcatDirectory/bin
+   cp src/test/cat_image_files/perfect_cat_image.txt pathToTomcatDirectory/bin
+4, Make all sh files executable 
+   chmod +x *.sh 
+5. Run
+   sh startup.sh
+   
 _______________________________________
 Unit & Integration Test 
 _______________________________________
@@ -79,4 +78,7 @@ to match the greatest length to make a perfect MxN grid
 Only return coordinates that don’t have overlapping image. So if there’s many matches at say, 50% and they lie within the same general area, 
 ignore them because the image space is already spoken for. This decision was made to prevent an influx of coordinates, 
 and assumes you want the best possible match of the given coordinates
+
+Currently doesn't assess image rotations but can be implemented: 
+90 degrees, 180 degree, 270 degree. Methods to translate image already provided in ImageArray class
 

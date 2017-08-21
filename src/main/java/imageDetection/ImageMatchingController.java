@@ -36,7 +36,8 @@ public class ImageMatchingController {
      */
     @RequestMapping(value = version + "/cat", method = RequestMethod.POST, consumes = "multipart/form-data", produces="application/json")
     public ResponseEntity<ArrayList<Match>> create(@RequestParam("file") MultipartFile file, @RequestParam(value = "threshold", defaultValue = "75") int threshold) {
-        System.out.println("---------INSIDE ORDER----------");
+        System.out.println("work directory is: " + Application.workingDir);
+
         ArrayList<Match> matches;
         CatImageArray catImageArray = new CatImageArray(file, threshold);
         matches = catImageArray.getMatches();

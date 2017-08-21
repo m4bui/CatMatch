@@ -31,7 +31,6 @@ public class CatImageArrayIT {
         MockMultipartFile multipartFile = new MockMultipartFile("perfect_cat_image.txt", fis);
         CatImageArray catImageArray = new CatImageArray(multipartFile, 0);
         perfectCatImage = catImageArray.getPerfectImage(Application.perfectCatPath);
-        createCatTestFiles();
     }
 
     /**
@@ -80,7 +79,7 @@ public class CatImageArrayIT {
                         perfectCatImageCopy.add(row, replace + perfectCatImageCopy.get(row).substring(subString_index));
                         perfectCatImageCopy.remove(row + 1);
                         String textFile = String.valueOf(CatImageArray.PERFECT_CAT_PIXEL_COUNT - (CatImageArray.PERFECT_CAT_COL_COUNT * row + col + 1)) + "_cat_image.txt";
-                        Path file = Paths.get(Application.workingDir + textFile);
+                        Path file = Paths.get(Application.workingDir + "/" + textFile);
                         Files.write(file, perfectCatImageCopy, Charset.forName("UTF-8"));
                     }
                 }

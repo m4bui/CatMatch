@@ -21,7 +21,7 @@ public class CatImageArray extends ImageArray {
     public CatImageArray(MultipartFile file, int threshold) {
         //call parent class to initalize the confidence values 0 - 100
         super();
-        mPerfectCatImage = getPerfectImage("/Users/michellebui/Desktop/cat_match/perfect_cat_image.txt");
+        mPerfectCatImage = getPerfectImage(Application.workingDir + "/perfect_cat_image.txt");
         mImage = setImageArray(file);
         this.mThreshold = threshold;
     }
