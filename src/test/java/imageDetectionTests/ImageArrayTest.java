@@ -10,24 +10,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.awt.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ImageArrayTest {
 
-    private String fileDir = "/Users/michellebui/Desktop/cat_match/";
-//    Should_ExpectedBehavior_When_StateUnderTest
     private ImageArray mImageArray;
     private ArrayList<String > mPerfectCatImage;
-    public static final String imageWithCats = "/Users/michellebui/Desktop/cat_match/image_with_cats.txt";
+    public static final String imageWithCats = ImageMatchingControllerIT.fileDir + "image_with_cats.txt";
 
     @Before
     public void setUp() {
@@ -316,6 +310,39 @@ public class ImageArrayTest {
         ArrayList<String> image = mImageArray.getPerfectImage(imageWithCats);
         int maxCol = image.get(0).length();
         assertEquals(145, mImageArray.getGridPosition(1, 45, maxCol));
+    }
+
+    @Test
+    public void Should_ReturnFalse_PositionOutOfRanges() {
+        ArrayList<Range> range = new ArrayList<>();
+        range.add(new Range(50,80));
+
+        ArrayList<Range> rangeToCompare = new ArrayList<>();
+        rangeToCompare.add(new Range(18,22));
+        rangeToCompare.add(new Range(0, 8));
+        rangeToCompare.add(new Range(24, 30));
+        assertFalse(mImageArray.isImageOverlap(range, rangeToCompare));
+    }
+
+    @Test
+    public void Should_ReturnTrue_PositionInRange() {
+        ArrayList<Range> rangeToCompare = new ArrayList<>();
+        rangeToCompare.add(new Range(0,2));
+
+        ArrayList<Range> range = new ArrayList<>();
+        range.add(new Range(18,22));
+        range.add(new Range(0, 8));
+        range.add(new Range(24, 30));
+        assertTrue(mImageArray.isImageOverlap(range, rangeToCompare));
+    }
+
+    @Test
+    public void Should_Return4056_Positionx40y41() {
+        ArrayList<Range> ranges = mImageArray.getMatrixArea(new Coordinate(40, 41), CatImageArray.PERFECT_CAT_ROW_COUNT, CatImageArray.PERFECT_CAT_COL_COUNT, 100);
+        for(Range range : ranges) {
+            System.out.println(range.getLow() + "-" + range.getHigh());
+        }
+
     }
 
     public void testDimen90n270(ArrayList<String> imageArray, ArrayList<String> perfectImageArray) {

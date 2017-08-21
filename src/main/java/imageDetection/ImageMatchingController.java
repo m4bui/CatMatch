@@ -21,7 +21,7 @@ public class ImageMatchingController {
      */
     private final String version = "/imageDetect/v1";
     @RequestMapping("/")
-    public String defaultPage(@RequestParam(value="name", defaultValue="Intuit") String name) {
+    public String defaultPage() {
         return "imageDetection";
     }
 
@@ -39,6 +39,7 @@ public class ImageMatchingController {
         ArrayList<Match> matches;
         CatImageArray catImageArray = new CatImageArray(file, threshold);
         matches = catImageArray.getMatches();
+        System.out.println("Size of matches returned is: " + matches.size());
         return new ResponseEntity<>(matches, HttpStatus.OK);
     }
 }

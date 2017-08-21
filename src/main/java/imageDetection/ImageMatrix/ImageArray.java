@@ -105,12 +105,24 @@ public class ImageArray {
         return image;
     }
 
+    //accessor to get the max imagCol of the image passed in
     public int getClientImageCol() {
         return mClientImageCol;
     }
 
-    public int getmClientImageRow() {
+    //accessor to get the max imageROw of the col passed in
+    public int getClientImageRow() {
         return mClientImageRow;
+    }
+
+    //accessor to get the rowCount of the perfect image
+    public int getPerfectMatchRow() {
+        return mPerfectMatchRow;
+    }
+
+    //accessor to get the col count of the perfect image
+    public int getPerfectMatchCol() {
+        return mPerfectMatchCol;
     }
     /**
      * Get confidence values of image match
@@ -209,32 +221,27 @@ public class ImageArray {
 
         ArrayList<Match> finalMatches = new ArrayList<>(); //all non overlapping matches
         ArrayList<Match> allMatches = matches;
+        ArrayList<Match> matchesToRemove = new ArrayList<>();
 
         int gridPosition;
         boolean exists;
 
         if(allMatches != null && allMatches.size() > 0) { //make sure there's something in the matches to compare to
-            finalMatches.add(allMatches.get(0)); //add first point as a starting point
+
             for(Match match : allMatches) {
                 exists = false; //set to false, don't know if the match coordinate is an overlapping image
                 Coordinate coordinate = match.getPosition(); //get Coordinate of the existing matches
-                gridPosition = getGridPosition(coordinate.getX(), coordinate.getY(), maxCol); //get its grid position
+                gridPosition = getGridPosition(coordinate.getX(), coordinate.getY(), imageCol); //get its grid position
 
                 //compare the current match with the final matches, if it overlaps don't add it
                 for (Match finalMatch : finalMatches) {
-                    //range of grid values for the coordinate that qualify as the match to be returned
-                    ArrayList<Range> ranges = getMatrixArea(finalMatch.getPosition(), maxRow, maxCol, imageCol);
-                    for(Range range : ranges) {
-                        //if grid position already exists break don't need to look at the remaining ranges if any
-                        if(range.contains(gridPosition)) {
-                            exists = true;
+                    if(!match.equals(finalMatch)) {
+                        ArrayList<Range> ranges = getMatrixArea(finalMatch.getPosition(), maxRow, maxCol, imageCol);
+                        ArrayList<Range> rangesToCompare = getMatrixArea(coordinate, maxRow, maxCol, imageCol);
+                        exists = isImageOverlap(ranges, rangesToCompare);
+                        if(exists)
                             break;
-                        }
                     }
-
-                    //if it exists break don't need to look at the remaining matches in the finalMatch if any
-                    if(exists == true)
-                        break;
                 }
 
                 if(exists == false)
@@ -244,6 +251,25 @@ public class ImageArray {
         return  finalMatches;
     }
 
+    /**
+     * Returns true if the position is within the list of ranges of false otherwise
+     * @param ranges list of ranges
+     * @return true if position is within range, false if position is NOT in range
+     */
+    public boolean isImageOverlap(ArrayList<Range> ranges, ArrayList<Range> finalRanges) {
+        int position;
+        for(Range range : ranges) {
+            position = range.getLow();
+            while(position <= range.getHigh()) {
+                //if grid position already exists break don't need to look at the remaining ranges if any
+                for(Range finalRange : finalRanges)
+                    if(finalRange.contains(position))
+                        return true;
+                position++;
+            }
+        }
+        return false;
+    }
 
     /**
      * Calculates the grid position based on a given coordinate
@@ -265,10 +291,14 @@ public class ImageArray {
         ArrayList<Range> ranges = new ArrayList<>();
         int x = position.getX();
         int y = position.getY();
-//        int gridPosition = getGridPosition(x,y, col);
-        for(int i = x; i < x + perfectImageRow ; i++ ) {
-            int currentPosition = getGridPosition(i, y , imageCol);
-            ranges.add(new Range(currentPosition, currentPosition+ perfectImageCol));
+        int currentPosition;
+//        int currentPosition = getGridPosition(x, y , imageCol);
+        int row = 0;
+        while(row < perfectImageRow) {
+            currentPosition= getGridPosition(x + row, y , imageCol);
+            ranges.add(new Range(currentPosition, currentPosition + perfectImageCol - 1));
+//            ranges.add(new Range(currentPosition, currentPosition + perfectImageCol -1));
+            row++;
         }
 
         return ranges;
